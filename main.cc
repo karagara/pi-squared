@@ -22,7 +22,7 @@
 
 int main()
 {
-	std::cout << "Starting test program" << endl;
+	std::cout << "Starting test program" << std::endl;
 //	Mat img = imread("../bin/test/lenna.png", CV_LOAD_IMAGE_COLOR);
 
 //	namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
