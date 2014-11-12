@@ -24,7 +24,7 @@ using namespace cv;
 int main()
 {
 
-	Mat img = imread("../lib/test/lenna.png", CV_LOAD_IMAGE_COLOR);
+	Mat img = imread("../bin/test/lenna.png", CV_LOAD_IMAGE_COLOR);
 
 	namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
 	imshow("MyWindow", img);
