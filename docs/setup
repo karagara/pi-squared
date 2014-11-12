@@ -1,0 +1,5 @@
+Packages Installed:
+sudo apt-get install git
+sudo apt-get install cmake
+sudo apt-get install gcc
+sudo apt-get install build-essential
