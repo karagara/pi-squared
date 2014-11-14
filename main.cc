@@ -13,21 +13,31 @@
  * Module one, testing without a webcam
  */
 
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include <iostream>
-//using namespace std;
-//using namespace cv;
 
-int main()
+using namespace cv;
+
+int main( int argc, char** argv )
 {
-	std::cout << "Starting test program" << std::endl;
-//	Mat img = imread("../bin/test/lenna.png", CV_LOAD_IMAGE_COLOR);
+	if ( argc != 2 )
+	{
+		std::cout << "usage: testExec <Image Path>" << std::endl;
+		return -1;
+	}
 
-//	namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
-//	imshow("MyWindow", img);
+	Mat image;
+	image = imread(argv[1], 1);
+	
+	if ( !image.data )
+	{
+		std::cout << "No Image Data" << std::endl;
+		return -1;
+	}
+	namedWindow("MyWindow", WINDOW_AUTOSIZE);
+	imshow("MyWindow", image);
 
-//	waitKey(0);
-//	return 0;
+	waitKey(0);
+
+	return 0;
 }
