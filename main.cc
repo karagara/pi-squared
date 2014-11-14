@@ -1,43 +1,27 @@
-/*
- * visionTest.cpp
+/* main.cpp
+ * Authors: Yan Liu, Colten Normore
  *
- *  Created on: Jul 4, 2014
- *      Author: Colten
- *
- *  Moved the old test methods out from the main file to here. Nice
- *  place to start and see if all the opencv libraries are linked
- *  properly
+ * Main method for the 3pi/R.Pi vision system. Sets up the individual modules,
+ * and gets things rolling
  */
 
-/*
- * Module one, testing without a webcam
- */
-
-#include <opencv2/opencv.hpp>
 #include <iostream>
+#include "pi2core/vision.h"
+#include "pi2core/controller.h"
+#include "pi2core/logic.h"
 
-using namespace cv;
+int main() {
+	//setup modules
+	vision* v_module = new vision();
+	controller* c_module = new controller();
+	logic* l_module = new logic(c_module, v_module);
 
-int main( int argc, char** argv )
-{
-	if ( argc != 2 )
-	{
-		std::cout << "usage: testExec <Image Path>" << std::endl;
-		return -1;
-	}
+	//run logic
+	l_module->runLogic();
 
-	Mat image;
-	image = imread(argv[1], 1);
-	
-	if ( !image.data )
-	{
-		std::cout << "No Image Data" << std::endl;
-		return -1;
-	}
-	namedWindow("MyWindow", WINDOW_AUTOSIZE);
-	imshow("MyWindow", image);
-
-	waitKey(0);
-
+	//teardown
+	delete v_module;
+	delete c_module;
+	delete l_module;
 	return 0;
 }
