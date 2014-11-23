@@ -6,6 +6,7 @@
  */
 
 #include "controller.h"
+#include <wiringPi.h>
 
 controller::controller() {
 	// TODO Auto-generated constructor stub
@@ -19,4 +20,5 @@ controller::~controller() {
 void controller::moveWheels(int lWheel, int rWheel){
 	//convert to an agreed message type
 	//send through rPi serial port to 3pi
+
 }
