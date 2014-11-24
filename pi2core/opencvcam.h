@@ -5,17 +5,16 @@
  *      Author: Colten
  */
 
-#ifndef VISION_H_
-#define VISION_H_
+#ifndef OPENCVCAM_H_
+#define OPENCVCAM_H_
 
 #include "visionInterface.h"
-//#include <opencv2/imgproc/imgproc.hpp>
 
-class vision : public visionInterface {
+class OpenCVCam : public visionInterface {
 public:
 	//constructors
-	vision();
-	virtual ~vision();
+	OpenCVCam();
+	~OpenCVCam();
 
 	cv::Mat getFrame();
 
@@ -23,4 +22,4 @@ private:
 	cv::VideoCapture* vCapture;
 };
 
-#endif /* VISION_H_ */
+#endif /* OPENCVCAM_H_ */

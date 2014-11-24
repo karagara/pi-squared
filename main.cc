@@ -6,13 +6,14 @@
  */
 
 #include <iostream>
-#include "pi2core/vision.h"
+#include "pi2core/rpicamera.h"
+#include "pi2core/opencvcam.h"
 #include "pi2core/controller.h"
 #include "pi2core/logic.h"
 
 int main() {
 	//setup modules
-	vision* v_module = new vision();
+	RPiCamera* v_module = new RPiCamera();
 	controller* c_module = new controller();
 	logic* l_module = new logic(c_module, v_module);
 

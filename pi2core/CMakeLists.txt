@@ -1,1 +1,1 @@
-add_library(pi2core controller.cpp vision.cpp logic.cpp)
+add_library(pi2core controller.cpp rpicamera.cpp opencvcam.cpp logic.cpp)

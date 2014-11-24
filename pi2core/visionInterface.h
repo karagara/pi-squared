@@ -12,11 +12,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 class visionInterface{
-	public:
-		virtual cv::Mat getFrame()=0;
+public:
+	virtual cv::Mat getFrame()=0;
 };
-
-
-
 
 #endif /* VISIONINTERFACE_H_ */

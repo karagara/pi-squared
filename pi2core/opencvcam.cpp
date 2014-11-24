@@ -1,21 +1,21 @@
 /*
- * vision.cpp
+ * OpenCVCam.cpp
  *
  *  Created on: Jul 4, 2014
  *      Author: Colten
  */
 
-#include "vision.h"
+#include "opencvcam.h"
 
-vision::vision() {
+OpenCVCam::OpenCVCam() {
 	this->vCapture = new cv::VideoCapture(0);
 }
 
-vision::~vision() {
+OpenCVCam::~OpenCVCam() {
 	// TODO Auto-generated destructor stub
 }
 
-cv::Mat vision::getFrame(){
+cv::Mat OpenCVCam::getFrame(){
 	cv::Mat img;
 	vCapture->read(img);
 	return img;
