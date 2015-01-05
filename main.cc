@@ -27,7 +27,7 @@ int main( int argc, const char* argv[] ) {
 		std::cout << "Unable to open serial device" << std::endl;
 		return 1 ;
 	}
-/*	
+	
 	if (wiringPiSetup() == -1 )
 	{
 		std::cout << "Unable to start wiringPi" << std::endl;
@@ -36,7 +36,7 @@ int main( int argc, const char* argv[] ) {
 	std::cout << "Attempting to send 'A' to the 3Pi" << std::endl;
 	serialPutchar(fd, pi2::PRINT);
 	serialPutchar(fd, 'A');
-*/	
+	
 	return 0;
 }
 
