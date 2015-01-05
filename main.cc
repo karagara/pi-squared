@@ -6,23 +6,37 @@
  */
 
 #include <iostream>
-#include "pi2core/rpicamera.h"
-#include "pi2core/opencvcam.h"
-#include "pi2core/controller.h"
-#include "pi2core/logic.h"
+#include "pi2core/pi2serialenums.h"
 
-int main() {
-	//setup modules
-	RPiCamera* v_module = new RPiCamera();
-	controller* c_module = new controller();
-	logic* l_module = new logic(c_module, v_module);
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
-	//run logic
-	l_module->runLogic();
 
-	//teardown
-	delete v_module;
-	delete c_module;
-	delete l_module;
+int main( int argc, const char* argv[] ) {
+	pi2::Serial serialTest = pi2::SETM2SPEED;
+	char chartest = (char)355;
+	std::cout << "chartest is " << chartest << std::endl;
+	std::cout << "back to int is " << (int)chartest << std::endl;
+
+	int fd = 0;
+	int count = 0;
+	unsigned int nextTime = 0;
+
+	if ((fd = serialOpen("/dev/ttyAMA0", 9800)) < 0)
+	{
+		std::cout << "Unable to open serial device" << std::endl;
+		return 1 ;
+	}
+/*	
+	if (wiringPiSetup() == -1 )
+	{
+		std::cout << "Unable to start wiringPi" << std::endl;
+	}	
+	
+	std::cout << "Attempting to send 'A' to the 3Pi" << std::endl;
+	serialPutchar(fd, pi2::PRINT);
+	serialPutchar(fd, 'A');
+*/	
 	return 0;
 }
+
