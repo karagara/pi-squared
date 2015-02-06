@@ -1,19 +1,23 @@
-#include <pololu/orangutan.h> 
+#include <pololu/orangutan>
 #include "../pi2core/pi2serialenums.h"
    
 char receive_buffer[32];
 char send_buffer[32];
- 
+unsigned char receive_buffer_position = 0;
+
+void process_messages();
+void increment_buffer_position();
 void wait_for_sending_to_finish();
-void process_received_byte(char byte);
-void check_for_new_bytes_received();
- 
+char get_next_byte();
+
 int main()
 {
-    serial_set_baud_rate(9600);
-    serial_receive_ring(receive_buffer, sizeof(receive_buffer));
-
-    lcd_init_printf(); 
+    OrangutanSerial::setBaudRate(9600);
+    OrangutanSerial::receiveRing(receive_buffer, sizeof(receive_buffer));
+    OrangutanLEDs::green(HIGH);
+    OrangutanLEDs::red(TOGGLE);
+    OrangutanLCD::print("Derp");
+    
     while(1)
     {
         process_messages();
@@ -28,30 +32,32 @@ void process_messages(){
 	switch(message){
 	case pi2::SETM1SPEED: {
 		int speed = (int)get_next_byte();
-		set_m1_speed(speed);
+		OrangutanMotors::setM1Speed(speed);
 		} break;
 	case pi2::SETM2SPEED: {
 		int speed = (int)get_next_byte();
-		set_m2_speed(speed);
+		OrangutanMotors::setM2Speed(speed);
 		} break;
 	case pi2::PRINT: {
-		printf("the new world");
+		OrangutanLCD::clear();	
+		OrangutanLCD::print("the new world");
 		} break; 
 	default: {
-                printf("invalid message");
+        OrangutanLCD::print("invalid message");
+		OrangutanLCD::clear();
 		} break;
 	}
 }
 
 char get_next_byte(){
 	char byte;
-	while (serial_get_recieved_bytes() == recieve_buffer_position);
+	while (OrangutanSerial::getReceivedBytes() == receive_buffer_position);
 	byte = receive_buffer[receive_buffer_position];
 	increment_buffer_position();
 	return byte;
 }
 
-int increment_buffer_position()
+void increment_buffer_position()
 {
 	if (receive_buffer_position == sizeof(receive_buffer)-1)
         {
@@ -65,5 +71,5 @@ int increment_buffer_position()
 
 void wait_for_sending_to_finish()
 {
-    while(!serial_send_buffer_empty());
+    while(!OrangutanSerial::sendBufferEmpty());
 }
