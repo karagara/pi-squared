@@ -10,14 +10,13 @@
 
 #include "visionInterface.h"
 #include <raspicam/raspicam_cv.h>
-//#include <opencv2/imgproc/imgproc.hpp>
 
 class RPiCamera : public visionInterface {
 public:
 	RPiCamera();
 	~RPiCamera();
 
-	cv::Mat getFrame();
+	void getFrame(cv::Mat &);
 
 private:
 	raspicam::RaspiCam_Cv* vCapture;

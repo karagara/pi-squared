@@ -16,7 +16,7 @@ public:
 	OpenCVCam();
 	~OpenCVCam();
 
-	cv::Mat getFrame();
+	void getFrame(cv::Mat &);
 
 private:
 	cv::VideoCapture* vCapture;

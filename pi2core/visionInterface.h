@@ -13,7 +13,7 @@
 
 class visionInterface{
 public:
-	virtual cv::Mat getFrame()=0;
+	virtual void getFrame(cv::Mat &)=0;
 };
 
 #endif /* VISIONINTERFACE_H_ */

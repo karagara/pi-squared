@@ -1,2 +1,4 @@
 build
 .*
+3picode/*.o
+3picode/*.hex

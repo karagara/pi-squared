@@ -24,7 +24,7 @@ void logic::runLogic(){
 	while (true) {
 		//get image from stream
 		cv::Mat cameraFrame,bwFrame,finalFrame;
-		cameraFrame=v_module->getFrame();
+		v_module->getFrame(cameraFrame);
 
 		//do a basic blur
 	    cv::medianBlur(cameraFrame, finalFrame, 5);

@@ -15,8 +15,6 @@ OpenCVCam::~OpenCVCam() {
 	// TODO Auto-generated destructor stub
 }
 
-cv::Mat OpenCVCam::getFrame(){
-	cv::Mat img;
-	vCapture->read(img);
-	return img;
+void OpenCVCam::getFrame(cv::Mat & image){
+	vCapture->read(image);
 }
