@@ -37,7 +37,7 @@ int main(){
 		//get image from stream
 		cv::Mat cameraFrame,bwFrame,finalFrame;
 		camera.getFrame(cameraFrame);
-/*
+
 		//do a basic blur
 	    	cv::medianBlur(cameraFrame, finalFrame, 5);
 
@@ -119,13 +119,12 @@ int main(){
 
 
 		serialPutchar(fd, pi2::SETM1SPEED);
-        	serialPutchar(fd, (char)l_motor);
+        serialPutchar(fd, (char)l_motor);
 
-        	serialPutchar(fd, pi2::SETM2SPEED);
-        	serialPutchar(fd, (char)r_motor);
+        serialPutchar(fd, pi2::SETM2SPEED);
+        serialPutchar(fd, (char)r_motor);
 
-		
-*/
+
 		//show image
 		cv::imshow("cam", cameraFrame);
 		if (cv::waitKey(30) >= 0) break;

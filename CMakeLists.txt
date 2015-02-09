@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project("Pi2 Robot Controller")
 
 set(raspicam_DIR /usr/local/lib/cmake)
-set(CMAKE_CXX_FLAGS "-I/usr/local/include -L/usr/local/lib -lwiringPi")
+set(CMAKE_CXX_FLAGS "-I/usr/local/include -L/usr/local/lib -lwiringPi -lraspicam -lraspicam_cv")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
