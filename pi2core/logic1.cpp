@@ -26,12 +26,12 @@ int Sat_Max = 256;
 int Val_Min = 0;
 int Val_Max = 256;
 
-
 void morphologicalImgProc(cv::Mat &frame);
 string integerToString(int num);
 int angleToCenter(const CvPoint &v1, const CvPoint &v2);
 void doAction(int totalAngleOfFinger, int fingerSize);
-void creatHSVApp();
+void createHSVApp();
+void trackHand(cv::Mat src, cv::Mat &dest);
 
 logic::logic(controllerInterface *controller, visionInterface *vision) {
     this->c_module = controller;
@@ -44,7 +44,7 @@ logic::~logic() {
 
 void logic::runLogic(){
     while (true) {
-        Mat cameraFrame,  thresholdFrame;
+        Mat cameraFrame,  hsvFrame, thresholdFrame;
         v_module->getFrame(cameraFrame);
         //hst tool
         createHSVApp();
