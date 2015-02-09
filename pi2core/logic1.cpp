@@ -26,6 +26,13 @@ int Sat_Max = 256;
 int Val_Min = 0;
 int Val_Max = 256;
 
+
+void morphologicalImgProc(cv::Mat &frame);
+string integerToString(int num);
+int angleToCenter(const CvPoint &v1, const CvPoint &v2);
+void doAction(int totalAngleOfFinger, int fingerSize);
+void creatHSVApp();
+
 logic::logic(controllerInterface *controller, visionInterface *vision) {
     this->c_module = controller;
     this->v_module = vision;
@@ -37,11 +44,9 @@ logic::~logic() {
 
 void logic::runLogic(){
     while (true) {
-        logic myLogic = this.logic;
         Mat cameraFrame,  thresholdFrame;
         v_module->getFrame(cameraFrame);
         //hst tool
-        
         createHSVApp();
         //switch the RGB to HSV space, combined with background substraction
         cv::cvtColor(cameraFrame, hsvFrame, CV_BGR2HSV);
@@ -75,7 +80,7 @@ void logic::runLogic(){
 
 
 //------------------------------------------------------Helper Function
-void logic::createHSVApp() {
+void createHSVApp() {
     namedWindow(trackingHSVApplication, 0);
     char trackingHSV[50];
     sprintf(trackingHSV, "Hue_Min", Hue_Min);
@@ -97,7 +102,7 @@ void logic::createHSVApp() {
 
 
 //calculate the angle between two points
-int logic::angleToCenter(const CvPoint &finger, const CvPoint &center) {
+int angleToCenter(const CvPoint &finger, const CvPoint &center) {
     float y_angle = center.y - finger.y; //center = 1;
     float x_angle = finger.x - center.x;// tip =2;
     float theta = atan(y_angle/ x_angle);
@@ -106,7 +111,7 @@ int logic::angleToCenter(const CvPoint &finger, const CvPoint &center) {
 }
 
 //convert the integer to string
-string logic::integerToString(int num) {
+string integerToString(int num) {
     stringstream strings;
     strings << num;
     string s = strings.str();
@@ -115,7 +120,7 @@ string logic::integerToString(int num) {
 
 //morphological Image processing
 //Erosion -> dilation -> closing the frame ensure to get the better performance
-void logic::morphologicalImgProc(cv::Mat &frame) {
+void morphologicalImgProc(cv::Mat &frame) {
     cv::Mat element = getStructuringElement(MORPH_ELLIPSE, CvSize(9, 9), Point(5, 5));
     cv::dilate(frame, frame, element);
     cv::erode(frame, frame, element);
@@ -124,7 +129,7 @@ void logic::morphologicalImgProc(cv::Mat &frame) {
 }
 
 //the important function to track the hand, the algorithm is described in the report
-void logic::trackHand(cv::Mat src, cv::Mat &dest) {
+void trackHand(cv::Mat src, cv::Mat &dest) {
     //initialization local variables
     Rect boundRect;
     unsigned int largestObj = 0;
@@ -213,7 +218,7 @@ void logic::trackHand(cv::Mat src, cv::Mat &dest) {
 //3.  3 fingers && total angle: 190 - 210
 //4.  2 fingers && total angle: 120 - 130
 //5.  1 finger && total angle:  65 - 75
-void logic::doAction(const int totalAngleOfFinger, const int fingerSize){
+void doAction(const int totalAngleOfFinger, const int fingerSize){
     int l_motor =0, r_motor = 0;
     if( totalAngleOfFinger>= 270 && totalAngleOfFinger <= 285 && (fingerSize == 5  )){
         l_motor = 30;

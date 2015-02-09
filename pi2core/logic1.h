@@ -18,12 +18,6 @@ public:
 	logic(controllerInterface *, visionInterface *);
 	virtual ~logic();
 	void runLogic();
-    void morphologicalImgProc(cv::Mat &frame);
-    std::string integerToString(int num);
-    int angleToCenter(const CvPoint &v1, const CvPoint &v2);
-    void doAction(int totalAngleOfFinger, int fingerSize);
-    void creatHSVApp();
-
 private:
 	controllerInterface* c_module;
 	visionInterface* v_module;
