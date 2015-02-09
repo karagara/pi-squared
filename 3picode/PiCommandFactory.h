@@ -7,12 +7,12 @@ class SerialManager;
 class PiCommandFactory {
 public:
 	//Constructors
-	PiCommandFactory(SerialManager sManager) : serial(sManager) { };
+	PiCommandFactory(SerialManager* sManager) : _serial(sManager) { };
 	~PiCommandFactory();
 
-	PiCommand createCommand();
+	PiCommand* createCommand();
 private:
-	SerialManager serial;
+	SerialManager* _serial;
 };
 
 #endif /* PICOMMANDFACTORY_H_ */
