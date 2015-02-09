@@ -1,17 +1,17 @@
-#include "serialManager.h"
+#include "SerialManager.h"
 #include <pololu/orangutan>
 
 SerialManager::SerialManager(){
-	this.receive_buffer_position = 0;
+	this->receive_buffer_position = 0;
     OrangutanSerial::setBaudRate(9600);
-    OrangutanSerial::receiveRing(this.receive_buffer, sizeof(this.receive_buffer));	
+    OrangutanSerial::receiveRing(this->receive_buffer, sizeof(this->receive_buffer));	
 }
 
 char SerialManager::getNextByte(){
 	char byte;
-	while (OrangutanSerial::getReceivedBytes() == this.receive_buffer_position);
-	byte = this.receive_buffer[this.receive_buffer_position];
-	increment_buffer_position();
+	while (OrangutanSerial::getReceivedBytes() == this->receive_buffer_position);
+	byte = this->receive_buffer[this->receive_buffer_position];
+	this->incrementBufferPosition();
 	return byte;
 }
 
