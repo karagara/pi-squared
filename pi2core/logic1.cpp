@@ -37,9 +37,11 @@ logic::~logic() {
 
 void logic::runLogic(){
     while (true) {
+        logic myLogic = this.logic;
         Mat cameraFrame,  thresholdFrame;
         v_module->getFrame(cameraFrame);
         //hst tool
+        
         createHSVApp();
         //switch the RGB to HSV space, combined with background substraction
         cv::cvtColor(cameraFrame, hsvFrame, CV_BGR2HSV);
@@ -135,7 +137,7 @@ void logic::trackHand(cv::Mat src, cv::Mat &dest) {
     unsigned int numObjects = 0;
     double area = 0;
     double maxArea = 0;
-    //bool handFound = false;
+    bool handFound = false;
     //find all the contours in the threshold Frame
     
     findContours(src, contours, hierarchy, CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE);
