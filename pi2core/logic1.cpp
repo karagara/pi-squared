@@ -35,6 +35,43 @@ logic::~logic() {
     // TODO Auto-generated destructor stub
 }
 
+void logic::runLogic(){
+    while (true) {
+        Mat cameraFrame,  thresholdFrame;
+        v_module->getFrame(cameraFrame);
+        //hst tool
+        createHSVApp();
+        //switch the RGB to HSV space, combined with background substraction
+        cv::cvtColor(cameraFrame, hsvFrame, CV_BGR2HSV);
+        
+        cv::inRange(hsvFrame, Scalar(Hue_Min, Sat_Min, Val_Min), Scalar(Hue_Max, Sat_Max, Val_Max), thresholdFrame);
+        cv::imshow("Camera Threshold Module", thresholdFrame);
+        //testing in the blue glove on hand
+        //need to adjust before the live demo
+        //cv::inRange(hsvFrame, Scalar(58, 58, 95), Scalar(133, 154, 256),thresholdFrame);
+        
+        //blur image to remove basic imperfections
+        medianBlur(thresholdFrame, thresholdFrame, 3);
+        
+        //do the morphological image processing
+        //closing the frame
+        morphologicalImgProc(thresholdFrame);
+        
+        //track the hand, put the bounding box around the hand
+        //calculate the center point of the hand
+        trackHand(thresholdFrame, cameraFrame);
+        
+        imshow("Hand_Gesture_Detection", cameraFrame);
+        
+        //release the memory
+        cameraFrame.release();
+        thresholdFrame.release();
+        if (waitKey(10) >= 0)
+            break;
+    }
+}
+
+
 //------------------------------------------------------Helper Function
 void logic::createHSVApp() {
     namedWindow(trackingHSVApplication, 0);
@@ -67,7 +104,7 @@ int logic::angleToCenter(const CvPoint &finger, const CvPoint &center) {
 }
 
 //convert the integer to string
-string integerToString(int num) {
+string logic::integerToString(int num) {
     stringstream strings;
     strings << num;
     string s = strings.str();
@@ -174,7 +211,8 @@ void logic::trackHand(cv::Mat src, cv::Mat &dest) {
 //3.  3 fingers && total angle: 190 - 210
 //4.  2 fingers && total angle: 120 - 130
 //5.  1 finger && total angle:  65 - 75
-void doAction(const int totalAngleOfFinger, const int fingerSize){
+void logic::doAction(const int totalAngleOfFinger, const int fingerSize){
+    int l_motor =0, r_motor = 0;
     if( totalAngleOfFinger>= 270 && totalAngleOfFinger <= 285 && (fingerSize == 5  )){
         l_motor = 30;
         r_motor = 30;
@@ -192,38 +230,3 @@ void doAction(const int totalAngleOfFinger, const int fingerSize){
 }
 
 
-void logic::runLogic(){
-    while (true) {
-    Mat cameraFrame,  thresholdFrame;
-    v_module->getFrame(cameraFrame);
-    //hst tool
-    createHSVApp();
-        //switch the RGB to HSV space, combined with background substraction
-        cv::cvtColor(cameraFrame, hsvFrame, CV_BGR2HSV);
-        
-        cv::inRange(hsvFrame, Scalar(Hue_Min, Sat_Min, Val_Min), Scalar(Hue_Max, Sat_Max, Val_Max), thresholdFrame);
-        cv::imshow("Camera Threshold Module", thresholdFrame);
-        //testing in the blue glove on hand
-        //need to adjust before the live demo
-        //cv::inRange(hsvFrame, Scalar(58, 58, 95), Scalar(133, 154, 256),thresholdFrame);
-        
-        //blur image to remove basic imperfections
-        medianBlur(thresholdFrame, thresholdFrame, 3);
-        
-        //do the morphological image processing
-        //closing the frame
-        morphologicalImgProc(thresholdFrame);
-        
-        //track the hand, put the bounding box around the hand
-        //calculate the center point of the hand
-        trackHand(thresholdFrame, cameraFrame);
-        
-        imshow("Hand_Gesture_Detection", cameraFrame);
-
-        //release the memory
-        cameraFrame.release();
-        thresholdFrame.release();
-        if (waitKey(10) >= 0)
-            break;
-    }
-}

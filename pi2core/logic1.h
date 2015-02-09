@@ -19,7 +19,7 @@ public:
 	virtual ~logic();
 	void runLogic();
     void morphologicalImgProc(cv::Mat &frame);
-    string integerToString(int num);
+    std::string integerToString(int num);
     int angleToCenter(const CvPoint &v1, const CvPoint &v2);
     void doAction(int totalAngleOfFinger, int fingerSize);
     void creatHSVApp();
