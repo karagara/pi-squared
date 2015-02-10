@@ -10,9 +10,25 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
-void getContours(cv::Mat const &src, cv::Mat &dest, std::vector<std::vector<cv::Point> > & contours);
-bool separateR1(int R, int G, int B);
-void separateRegion(cv::Mat const &src, cv::Mat &dest);
+using namespace cv;
+using namespace std;
+#define PI 3.14159265
+const string trackingHSVApplication = "Tracking HSV Value";
+//initial min and max HSV filter values. These value will be changed using HSV track GUI
+//This GUI will detect the HSGf value that using the "Color Ball Tracking" Application
+int Hue_Min = 0;
+int Hue_Max = 256;
+int Sat_Min = 0;
+int Sat_Max = 256;
+int Val_Min = 0;
+int Val_Max = 256;
+
+void morphologicalImgProc(cv::Mat &frame);
+string integerToString(int num);
+int angleToCenter(const CvPoint &v1, const CvPoint &v2);
+void doAction(int totalAngleOfFinger, int fingerSize);
+void createHSVApp();
+void trackHand(cv::Mat src, cv::Mat &dest);
 
 int main(){
 	std::cout << "Beginning test" << std::endl;
@@ -32,140 +48,203 @@ int main(){
                 std::cout << "Unable to start wiringPi" << std::endl;
         }
 
+        while (true) {
+            Mat cameraFrame,  hsvFrame, thresholdFrame;
+            camera.getFrame(cameraFrame);
+            //hst tool
+            createHSVApp();
+            //switch the RGB to HSV space, combined with background substraction
+            cv::cvtColor(cameraFrame, hsvFrame, CV_BGR2HSV);
+            
+            cv::inRange(hsvFrame, Scalar(Hue_Min, Sat_Min, Val_Min), Scalar(Hue_Max, Sat_Max, Val_Max), thresholdFrame);
+            cv::imshow("Camera Threshold Module", thresholdFrame);
+            //testing in the blue glove on hand
+            //need to adjust before the live demo
+            //cv::inRange(hsvFrame, Scalar(58, 58, 95), Scalar(133, 154, 256),thresholdFrame);
+            
+            //blur image to remove basic imperfections
+            medianBlur(thresholdFrame, thresholdFrame, 3);
+            
+            //do the morphological image processing
+            //closing the frame
+            morphologicalImgProc(thresholdFrame);
+            
+            //track the hand, put the bounding box around the hand
+            //calculate the center point of the hand
+            trackHand(thresholdFrame, cameraFrame);
+            
+            imshow("Hand_Gesture_Detection", cameraFrame);
+            
+            //release the memory
+            cameraFrame.release();
+            thresholdFrame.release();
+            if (waitKey(10) >= 0)
+                break;
+	}
 
-	while(true){
-		//get image from stream
-		cv::Mat cameraFrame,bwFrame,finalFrame;
-		camera.getFrame(cameraFrame);
 
-		//do a basic blur
-	    	cv::medianBlur(cameraFrame, finalFrame, 5);
-
-	    	//threshold region based on rule separateR1
-	    	separateRegion(finalFrame, finalFrame);
-
-	    	//close frame
-	    	cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7), cv::Point(3,3));
-	    	cv::morphologyEx(finalFrame, finalFrame, cv::MORPH_CLOSE, element);
-
-	    	//get contours
-	    	cv::cvtColor(finalFrame, finalFrame, CV_RGB2GRAY);
-	    	std::vector<std::vector<cv::Point> > contours;
-	    	getContours(finalFrame, cameraFrame, contours);
-
-	    	//get bounding box and COM
-	    	int com_x, com_y, bbox_y, bbox_len;
-	    	if(contours.size() > 0){
-			cv::Rect bBox;
-			cv::Moments moment;
-	    		bBox = cv::boundingRect(contours[0]);
-	    		moment = cv::moments(contours[0]);
-			com_x = moment.m10 / moment.m00;
-			com_y = moment.m01 / moment.m00;
-			bbox_y = bBox.y;
-			bbox_len = bBox.height;
-	    	
-			cv::rectangle(cameraFrame,bBox,cv::Scalar(0, 255, 0));
-	    		cv::circle(cameraFrame, cv::Point(com_x, com_y), 30, cv::Scalar(255, 0, 0), 2);
-	    	}
-	    	cv::Size s = cameraFrame.size();
-	    	int desired_x = s.width/2;
-	    	int desired_len = 200;
-	    	int deadspot = 10;
-	    	int l_motor = 0, r_motor = 0;
-		if (bbox_len < (desired_len - deadspot)){
-			if (com_x < (desired_len - deadspot)){
-				l_motor = 15;
-				r_motor = 40;
-			}
-			else if (com_x > (desired_len + deadspot)){
-				l_motor = 40;
-				r_motor = 15;
-			}
-			else {
-				l_motor = 30;
-				r_motor = 30;
-			}
-		}
-		else if (bbox_len > (desired_len + deadspot)){
-                        if (com_x < (desired_len - deadspot)){
-                                l_motor = -40;
-                                r_motor = -15;
+    //------------------------------------------------------Helper Function
+    void createHSVApp() {
+        namedWindow(trackingHSVApplication, 0);
+        char trackingHSV[50];
+        sprintf(trackingHSV, "Hue_Min", Hue_Min);
+        sprintf(trackingHSV, "Hue_Max", Hue_Max);
+        sprintf(trackingHSV, "Sat_Min", Sat_Min);
+        sprintf(trackingHSV, "Sat_Max", Sat_Max);
+        sprintf(trackingHSV, "Val_Min", Val_Min);
+        sprintf(trackingHSV, "Val_Max", Val_Max);
+        
+        cv::createTrackbar("Hue_Min", trackingHSVApplication, &Hue_Min, Hue_Max);
+        cv::createTrackbar("Hue_Max", trackingHSVApplication, &Hue_Max, Hue_Max);
+        cv::createTrackbar("Sat_Min", trackingHSVApplication, &Sat_Min, Sat_Max);
+        cv::createTrackbar("Sat_MAX", trackingHSVApplication, &Sat_Max, Sat_Max);
+        cv::createTrackbar("Val_MIN", trackingHSVApplication, &Val_Min, Val_Max);
+        cv::createTrackbar("Val_MAX", trackingHSVApplication, &Val_Max, Val_Max);
+    }
+    
+    //--------------------------------------------------------------------
+    
+    
+    //calculate the angle between two points
+    int angleToCenter(const CvPoint &finger, const CvPoint &center) {
+        float y_angle = center.y - finger.y; //center = 1;
+        float x_angle = finger.x - center.x;// tip =2;
+        float theta = atan(y_angle/ x_angle);
+        int angleFinger = (int) round( theta * 180 / PI);
+        return angleFinger;
+    }
+    
+    //convert the integer to string
+    string integerToString(int num) {
+        stringstream strings;
+        strings << num;
+        string s = strings.str();
+        return s;
+    }
+    
+    //morphological Image processing
+    //Erosion -> dilation -> closing the frame ensure to get the better performance
+    void morphologicalImgProc(cv::Mat &frame) {
+        cv::Mat element = getStructuringElement(MORPH_ELLIPSE, CvSize(9, 9), Point(5, 5));
+        cv::dilate(frame, frame, element);
+        cv::erode(frame, frame, element);
+        morphologyEx(frame, frame, cv::MORPH_OPEN, element);
+        //morphologyEx(frame, frame, cv::MORPH_CLOSE, element);
+    }
+    
+    //the important function to track the hand, the algorithm is described in the report
+    void trackHand(cv::Mat src, cv::Mat &dest) {
+        //initialization local variables
+        Rect boundRect;
+        unsigned int largestObj = 0;
+        int boundingBoxHeight = 0;
+        vector<vector<Point> > contours; //store all the contours
+        vector<Vec4i> hierarchy;
+        vector<Point> convexHullPoint;
+        vector<Point> fingerPoint;
+        Point centerP;
+        unsigned int numObjects = 0;
+        double area = 0;
+        double maxArea = 0;
+        bool handFound = false;
+        //find all the contours in the threshold Frame
+        
+        findContours(src, contours, hierarchy, CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE);
+        numObjects = (unsigned int)hierarchy.size();
+        for (unsigned int i = 0; i < contours.size(); i++) {
+            Mat tempContour = Mat(contours[i]);
+            area = contourArea(tempContour);
+            if (area > maxArea) {
+                maxArea = area;
+                largestObj = i;
+            }
+        }
+        if( maxArea > 4000){
+            handFound = true;
+            boundRect = boundingRect(contours[largestObj]);
+            //draw the boundary of the object
+            drawContours(dest, contours, largestObj, Scalar(0, 0, 255), 3, 8,hierarchy);
+            //find the convex points for the largest object which is hand
+            convexHull(contours[largestObj], convexHullPoint, true, true);
+            //approxPolyDP( Mat(contours[largestObj]), contours[largestObj], 3, true );
+            //use moment method to find the center point
+            Moments moment = moments(Mat(contours[largestObj]), true);
+            int centerX = moment.m10 / moment.m00;
+            int centerY = moment.m01 / moment.m00;
+            Point centerPoint(centerX, centerY);
+            centerP = centerPoint;
+            Point printPoint(centerX, centerY + 15);
+            circle(dest, centerPoint, 8, Scalar(255, 0, 0), CV_FILLED);
+            //put the BoundingBox in the contour region
+            rectangle(dest, boundRect, Scalar(0, 0, 255), 2, 8, 0);
+            boundingBoxHeight = boundRect.height;
+            if (handFound) {
+                int countHullPoint = (int)convexHullPoint.size();
+                int maxdist = 0;
+                int pos = 0;
+                for (int j = 1; j < countHullPoint; j++) {
+                    pos = j;
+                    if (centerP.y >= convexHullPoint[j].y && centerP.y >= convexHullPoint[pos].y) {
+                        pos = j;
+                        int dist = (centerP.x - convexHullPoint[j].x)^ 2 + (centerP.y - convexHullPoint[j].y) ^ 2;
+                        if (  abs(convexHullPoint[j-1].x - convexHullPoint[j].x) < 12){
+                            if ( dist > maxdist){
+                                maxdist = dist;
+                                pos = j;
+                            }
                         }
-                        else if (com_x > (desired_len + deadspot)){
-                                l_motor = -15;
-                                r_motor = -40;
+                        else if( j == 0 || abs(convexHullPoint[j-1].x - convexHullPoint[j].x) >= 12 ){
+                            fingerPoint.push_back(convexHullPoint[pos]);
+                            cv::line(dest,centerP, convexHullPoint[pos],Scalar(0, 255, 0), 3, CV_AA, 0);
+                            circle(dest, convexHullPoint[pos], 8, Scalar(255, 0, 0), CV_FILLED);
+                            pos = j;
                         }
-                        else {
-                                l_motor = -30;
-                                r_motor = -30;
-                        }
-		}
-		else {
-                        if (com_x < (desired_len - deadspot)){
-                                l_motor = -15;
-                                r_motor = 15;
-                        }
-                        else if (com_x > (desired_len + deadspot)){
-                                l_motor = 15;
-                                r_motor = -15;
-                        }
-                        else {
-                                l_motor = 0;
-                                r_motor = 0;
-                        }
-		}
-
-
-
-		serialPutchar(fd, pi2::SETM1SPEED);
+                    }
+                }
+                
+                //get the size the fingers, and calculate the total angle of these fingers
+                int countFinger = (unsigned int)fingerPoint.size();
+                int angle = 0;
+                if( countFinger <= 5){
+                    for ( int x = 0; x < countFinger; x++){
+                        angle = angle + abs (angleToCenter(fingerPoint[x], centerP) );
+                    }
+                }
+                doAction( angle, countFinger);
+                putText(dest, integerToString(countFinger), printPoint, 1, 5, Scalar(0, 255, 0), 1, 5, false);
+            }
+        }
+    }
+    
+    //action performed based on the number of fingers and the total angle
+    //1.  5 fingers && total angle: 270 - 285
+    //2.  4 fingers && total angle: 240 - 255
+    //3.  3 fingers && total angle: 190 - 210
+    //4.  2 fingers && total angle: 120 - 130
+    //5.  1 finger && total angle:  65 - 75
+    void doAction(const int totalAngleOfFinger, const int fingerSize){
+        int l_motor =0, r_motor = 0;
+        if( totalAngleOfFinger>= 270 && totalAngleOfFinger <= 285 && (fingerSize == 5  )){
+            l_motor = 30;
+            r_motor = 30;
+        }
+        else if( totalAngleOfFinger >= 190 && totalAngleOfFinger <= 210 && fingerSize == 3){
+            l_motor = 0;
+            r_motor = 0;
+        }
+        serialPutchar(fd, pi2::SETM1SPEED);
         serialPutchar(fd, (char)l_motor);
-
+        
         serialPutchar(fd, pi2::SETM2SPEED);
         serialPutchar(fd, (char)r_motor);
+        //    else if( totalAngleOfFinger >= 240 && totalAngleOfFinger <= 255 && fingerSize == 4)
+        //
+        //    else if( totalAngleOfFinger >= 120 && totalAngleOfFinger <= 130 &&  (fingerSize == 2 ))
+        //
+        //    else if( totalAngleOfFinger >= 65 && totalAngleOfFinger <= 75 &&  (fingerSize == 1 ) )
+        //
+    }
+    
+    
 
-
-		//show image
-		cv::imshow("cam", cameraFrame);
-		if (cv::waitKey(30) >= 0) break;
-	}
-}
-
-void getContours(cv::Mat const &src, cv::Mat &dest, std::vector<std::vector<cv::Point> > & contours){
-	std::vector<cv::Vec4i> hierarchy;
-	cv::findContours(src,contours,hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-	cv::drawContours(dest,contours,-1,cv::Scalar(0, 0, 255), 3, 8, hierarchy);
-}
-
-bool separateR1(int R, int G, int B){
-	double rgRatio = (double)R/(double)G;
-	bool isSkin = false;
-	if ( rgRatio > 1.05 && rgRatio < 4.0){
-		isSkin = true;
-	}
-	return isSkin;
-}
-
-void separateRegion(cv::Mat const &src, cv::Mat &dest){
-	dest = src.clone();
-
-	    cv::Vec3b cwhite = cv::Vec3b::all(255);
-	    cv::Vec3b cblack = cv::Vec3b::all(0);
-	    for(int i = 0; i < src.rows; i++) {
-	        for(int j = 0; j < src.cols; j++) {
-	        	cv::Vec3b pix_bgr = src.ptr<cv::Vec3b>(i)[j];
-	            int B = pix_bgr.val[0];
-	            int G = pix_bgr.val[1];
-	            int R = pix_bgr.val[2];
-	            // apply rgb rule
-	            bool a = separateR1(R,G,B);
-
-	            //fill based on rule
-	            if(a)
-	            	dest.ptr<cv::Vec3b>(i)[j] = cwhite;
-	            else
-	            	dest.ptr<cv::Vec3b>(i)[j] = cblack;
-	        }
-	    }
-}
 
