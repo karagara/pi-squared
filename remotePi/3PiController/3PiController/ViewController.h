@@ -1,8 +1,9 @@
-//  ViewController.h
+//
+//  MainConsoleController.m
 //  3PiController
 //
-//  Created by Yan Liu on 15/2/23.
-//  Copyright (c) 2015  3piControllerIOS. All rights reserved.
+//  Created by Yan & Colten on 15/2/23.
+//  Copyright (c) 2015 3piControllerIOS. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
