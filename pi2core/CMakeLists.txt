@@ -1,1 +1,1 @@
-add_library(pi2core ColorBallAlgorithm.cpp TestAlg.cpp opencvcam.cpp logic.cpp mongoose.c)
+add_library(pi2core ColorBallAlgorithm.cpp TestAlg.cpp opencvcam.cpp logic.cpp mongoose.c tcpacceptor.cpp tcpstream.cpp SocketServerManager.cpp CommandQueue.cpp FrameQueue.cpp)
