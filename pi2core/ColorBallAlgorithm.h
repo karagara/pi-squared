@@ -14,6 +14,9 @@
 
 #include "AlgorithmInterface.h"
 
+class FrameQueue;
+class CommandQueue;
+
 class ColorBallAlgorithm : public AlgorithmInterface
 {
 public:
@@ -21,6 +24,7 @@ public:
 	~ColorBallAlgorithm(){};
 	
 	int pi2Main();
+	int testMain(FrameQueue *fq, CommandQueue *cq);
 };
 
 #endif

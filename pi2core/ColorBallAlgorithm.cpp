@@ -12,73 +12,19 @@
 #include <wiringSerial.h>
 #include "mongoose.h"
 
+#include "pi2core/FrameQueue.h"
+#include "pi2core/CommandQueue.h"
+
 void getContours(cv::Mat const &src, cv::Mat &dest, std::vector<std::vector<cv::Point> > & contours);
 bool separateR1(int R, int G, int B);
 void separateRegion(cv::Mat const &src, cv::Mat &dest);
 void processChannel(cv::Mat &channel);
 
-std::vector<uchar> buffer;
-
-static void send_file(struct mg_connection *conn) {
-	mg_printf(conn, "--w00t\r\nContent-Type: image/jpeg\r\n"
-              "Content-Length: %lu\r\n\r\n", buffer.size());
-	mg_write(conn, &buffer[0], buffer.size());
-	mg_write(conn, "\r\n", 2);
-}
-
-struct conn_state {
-	time_t last_poll;
-};
-
-static int ev_handler(struct mg_connection *conn, enum mg_event ev) {
-	struct conn_state *state;
-	time_t now = time(NULL);
-
-	switch (ev) {
-		case MG_AUTH: return MG_TRUE;
-		case MG_REQUEST:
-			mg_printf(conn, "%s",                 
-				"HTTP/1.0 200 OK\r\n" "Cache-Control: no-cache\r\n"
-                "Pragma: no-cache\r\nExpires: Thu, 01 Dec 1994 16:00:00 GMT\r\n"
-                "Connection: close\r\nContent-Type: multipart/x-mixed-replace; "
-                "boundary=--w00t\r\n\r\n");
-
-			send_file(conn);
-
-			state = (struct conn_state *) malloc(sizeof(*state));
-			conn->connection_param = state;
-			state->last_poll = time(NULL);
-			return MG_MORE;
-
-		case MG_POLL:
-			state = (struct conn_state *) conn->connection_param;
-			if (state != NULL && now > state->last_poll) {
-				send_file(conn);
-				state->last_poll = now;
-			}
-			return MG_FALSE;
-
-		case MG_CLOSE:
-			free(conn->connection_param);
-			conn->connection_param = NULL;
-			return MG_FALSE;
-
-		default:
-			return MG_FALSE;
-	}
-}
 
 int ColorBallAlgorithm::pi2Main(){
 	std::cout << "Beginning test" << std::endl;
 	//RPiCamera camera;
 	OpenCVCam camera;
-
-	struct mg_server *server;
-
-	server = mg_create_server(NULL, ev_handler);
-	mg_set_option(server, "listening_port", "8080");
-
-	printf("Starting on port %s\n", mg_get_option(server, "listening_port"));
 
 	while(true){
 		//Create variables
@@ -120,17 +66,16 @@ int ColorBallAlgorithm::pi2Main(){
 		// 	circle( frame, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
 		// }
 
-		cv::imencode(".jpg", frame, buffer);
+		// std::vector<uchar> buffer;
+		// cv::imencode(".jpg", frame, buffer);
+		// fq->putFrame(buffer);
 		//show image
 		cv::imshow("cam", frame);
 		// cv::imshow("processed", processed);
 		// cv::imshow("canny", canny);
 		if (cv::waitKey(30) >= 0) break;
 
-
-		mg_poll_server(server, 100);
 	}
-	mg_destroy_server(&server);
 	return 0;
 }
 
