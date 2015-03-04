@@ -32,9 +32,7 @@
     [window makeKeyAndVisible];
 
     AppDelegates *appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
-    
-    
-    
+
     return YES;
 }
 

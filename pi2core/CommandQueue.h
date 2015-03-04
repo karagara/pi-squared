@@ -6,7 +6,8 @@
 struct Command
 {
 	char type;
-	int value;
+    int m1speed;
+    int m2speed;
 };
 
 class CommandQueue

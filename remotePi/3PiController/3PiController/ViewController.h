@@ -28,6 +28,7 @@
 - (IBAction)doSetting:(id)sender;
 - (IBAction)doConnect:(id)sender;
 - (IBAction)linktoMainConsole:(id)sender;
+- (IBAction)doDisconnect: (id)sender;
 
 @end
 

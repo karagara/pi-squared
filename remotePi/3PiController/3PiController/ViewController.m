@@ -61,7 +61,7 @@ static AppDelegates *appDelegate;
 - (IBAction)doConnect:(id)sender {
     [self initializeNetworkComm];
     [self.connStatus setText:@"Connecting...."];
-    NSString *response  = [NSString stringWithFormat:@"Connected Succesfully"];
+    NSString *response  = [NSString stringWithFormat:@"conndone"];
     NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
     [appDelegate.outputStream write:[data bytes] maxLength:[data length]];
     NSLog(@"%@, %@", hostName, portNumber);
@@ -75,6 +75,14 @@ static AppDelegates *appDelegate;
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Could not connect to 3pi" waitUntilDone:YES];
     } else {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Not connected to 3pi" waitUntilDone:YES];
+    }
+}
+
+- (IBAction)doDisconnect: (id)sender{
+    [appDelegate.inputStream close];
+    [appDelegate.outputStream close];
+    if ([appDelegate.outputStream streamStatus] == NSStreamStatusClosed) {
+        [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:[NSString stringWithFormat:@"Disconnected"] waitUntilDone:YES];
     }
 }
 

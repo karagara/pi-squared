@@ -13,9 +13,10 @@
 int main(int argc,char ** argv){
 
 	SocketServerManager socSrv;
+    
 	std::thread socThread(&SocketServerManager::run, &socSrv);	
-
+    
 	socThread.join();
-
+    
 	return 0;
 }

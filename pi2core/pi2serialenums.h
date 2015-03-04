@@ -10,4 +10,14 @@ namespace pi2 {
 		SETM2SPEED = 1,
 		PRINT = 2
 	};
+    
+    enum Type{
+        FORWARD = 'f',
+        BACK = 'b',
+        LEFT = 'l',
+        RIGHT = 'r',
+        STOP = 's',
+        NOCOMMAND = 'n',
+        CONNDONE = 'c'
+    };
 }
