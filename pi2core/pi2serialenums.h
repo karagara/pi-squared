@@ -8,6 +8,8 @@ namespace pi2 {
 	enum Serial {
 		SETM1SPEED = 0,
 		SETM2SPEED = 1,
-		PRINT = 2
+		PRINT = 2,
+		NOCOMMAND = 3,
+		STOP = 4
 	};
 }

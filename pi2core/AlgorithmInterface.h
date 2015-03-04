@@ -14,7 +14,6 @@
 
 class AlgorithmInterface {
 public:
-
 	virtual int pi2Main() = 0;
 };
 
