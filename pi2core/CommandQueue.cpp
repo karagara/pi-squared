@@ -3,7 +3,7 @@
 
 CommandQueue::CommandQueue(){
 	Command c;
-	c.type = pi2::NOCOMMAND;
+	c.type = "nomsg";
 	c.value = 0;
 	this->cq_command = c; 
 }
@@ -16,7 +16,7 @@ void CommandQueue::putCommand(Command command){
 
 Command CommandQueue::getCommand(){
 	Command replace_c;
-	replace_c.type = pi2::NOCOMMAND;
+	replace_c.type = "nomsg";
 	replace_c.value = 0;
 
 	this->cq_mutex.lock();

@@ -5,7 +5,7 @@
 
 struct Command
 {
-	char type;
+	std::string type;
 	int value;
 };
 
