@@ -10,6 +10,7 @@
 #include "FrameQueue.h"
 #include "CommandQueue.h"
 #include "JSONService.h"
+#include "pi2serialenums.h"
 
 HTTPServer::HTTPServer(cppcms::service &srv, FrameQueue* fq, CommandQueue* cq): cppcms::application(srv) {
     this->srv_fq = fq;
@@ -38,12 +39,29 @@ void HTTPServer::stream(){
 }
 
 void HTTPServer::placecom(std::string msg){
-    // std::cout << msg << std::endl;
     Command c;
-    c.value = 0;
-    c.type = msg;
+    if (msg == "up") {
+        c.type = pi2::FORWARD;
+        c.m1speed = 40;
+        c.m2speed = 40;
+    } else if (msg == "back") {
+        c.type = pi2::BACK;
+        c.m1speed = -40;
+        c.m2speed = -40;
+    } else if (msg == "right") {
+        c.type = pi2::RIGHT;
+        c.m1speed = 40;
+        c.m2speed = 0;        
+    } else if (msg == "left") {
+        c.type = pi2::LEFT;
+        c.m1speed = 0;
+        c.m2speed = 40;        
+    } else {
+        c.type = pi2::NOCOMMAND;
+        c.m1speed = 0;
+        c.m2speed = 0;        
+    }
     this->srv_cq->putCommand(c);
-    // response().out() << msg;
 }
 
 

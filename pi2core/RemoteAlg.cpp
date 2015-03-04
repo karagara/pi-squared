@@ -20,7 +20,6 @@ int RemoteAlg::pi2Main(){
 
 		//Handle Msg
 		Command c = this->commandQueue->getCommand();
-		std::cout << c.type << " : " << c.value << std::endl;
 
 		//place img to be read
 		std::vector<uchar> buffer;
