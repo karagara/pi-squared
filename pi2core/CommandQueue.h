@@ -5,8 +5,9 @@
 
 struct Command
 {
-	std::string type;
-	int value;
+	char type;
+    int m1speed;
+    int m2speed;
 };
 
 class CommandQueue

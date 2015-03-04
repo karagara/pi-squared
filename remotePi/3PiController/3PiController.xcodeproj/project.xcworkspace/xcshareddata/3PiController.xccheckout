@@ -10,26 +10,22 @@
 	<string>3PiController</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>96F1BCDD9D420E41E44A7C9A19E1E98A15DC7AF9</key>
-		<string>https://github.com/alvinliu725/remotePi.git</string>
 		<key>D75BC3E53D24F5F9DC1AC9EA17F26315403260E3</key>
 		<string>https://github.com/karagara/pi-squared.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>3PiController/3PiController.xcodeproj</string>
+	<string>remotePi/3PiController/3PiController.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>96F1BCDD9D420E41E44A7C9A19E1E98A15DC7AF9</key>
-		<string>../../..</string>
 		<key>D75BC3E53D24F5F9DC1AC9EA17F26315403260E3</key>
 		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/alvinliu725/remotePi.git</string>
+	<string>https://github.com/karagara/pi-squared.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>96F1BCDD9D420E41E44A7C9A19E1E98A15DC7AF9</string>
+	<string>D75BC3E53D24F5F9DC1AC9EA17F26315403260E3</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -38,15 +34,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>D75BC3E53D24F5F9DC1AC9EA17F26315403260E3</string>
 			<key>IDESourceControlWCCName</key>
-			<string></string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>96F1BCDD9D420E41E44A7C9A19E1E98A15DC7AF9</string>
-			<key>IDESourceControlWCCName</key>
-			<string>remotePi</string>
+			<string>pi-squared</string>
 		</dict>
 	</array>
 </dict>

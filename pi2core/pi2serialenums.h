@@ -12,4 +12,14 @@ namespace pi2 {
 		NOCOMMAND = 3,
 		STOP = 4
 	};
+    
+    enum Type{
+        FORWARD = 'f',
+        BACK = 'b',
+        LEFT = 'l',
+        RIGHT = 'r',
+        STOP = 's',
+        NOCOMMAND = 'n',
+        CONNDONE = 'c'
+    };
 }

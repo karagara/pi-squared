@@ -6,13 +6,14 @@
 //  Copyright (c) 2015 3piControllerIOS. All rights reserved.
 //
 #import "AppDelegates.h"
-#import "ViewController.h"
+
 
 @implementation AppDelegates
 
 @synthesize window;
 @synthesize navigationController;
-
+@synthesize inputStream;
+@synthesize outputStream;
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -29,9 +30,12 @@
     self.window.rootViewController = navigationController;
     
     [window makeKeyAndVisible];
-    
+
+    AppDelegates *appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
+
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

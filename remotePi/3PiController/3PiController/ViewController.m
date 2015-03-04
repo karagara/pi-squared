@@ -14,13 +14,10 @@
 
 @implementation ViewController
 
-@synthesize inputS;
 @synthesize hostName;
 @synthesize portNumber;
-@synthesize outputS = _outputS;
 
-
-static ViewController *instance;
+static AppDelegates *appDelegate;
 
 // Do any additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -29,6 +26,7 @@ static ViewController *instance;
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Main Page" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = backButton;
     [self.connStatus setText:@"Not Connected"];
+    appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
 }
 
 - (void) viewWillAppear:(BOOL)animated{
@@ -63,20 +61,28 @@ static ViewController *instance;
 - (IBAction)doConnect:(id)sender {
     [self initializeNetworkComm];
     [self.connStatus setText:@"Connecting...."];
-    NSString *response  = [NSString stringWithFormat:@"Testing connection"];
+    NSString *response  = [NSString stringWithFormat:@"conndone"];
     NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
-    [outputS write:[data bytes] maxLength:[data length]];
+    [appDelegate.outputStream write:[data bytes] maxLength:[data length]];
     NSLog(@"%@, %@", hostName, portNumber);
     
-    while (([outputS streamStatus] != NSStreamStatusOpen && [outputS streamStatus] != NSStreamStatusError)) {
+    while (([appDelegate.outputStream streamStatus] != NSStreamStatusOpen && [appDelegate.outputStream streamStatus] != NSStreamStatusError)) {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Connection in progress…" waitUntilDone:YES];
     }
-    if ([outputS streamStatus] == NSStreamStatusOpen) {
+    if ([appDelegate.outputStream streamStatus] == NSStreamStatusOpen) {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:[NSString stringWithFormat:@"Connected to %@:%@", hostName, portNumber] waitUntilDone:YES];
-    } else if ([outputS streamStatus] == NSStreamStatusError) {
+    } else if ([appDelegate.outputStream streamStatus] == NSStreamStatusError) {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Could not connect to 3pi" waitUntilDone:YES];
     } else {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Not connected to 3pi" waitUntilDone:YES];
+    }
+}
+
+- (IBAction)doDisconnect: (id)sender{
+    [appDelegate.inputStream close];
+    [appDelegate.outputStream close];
+    if ([appDelegate.outputStream streamStatus] == NSStreamStatusClosed) {
+        [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:[NSString stringWithFormat:@"Disconnected"] waitUntilDone:YES];
     }
 }
 
@@ -91,19 +97,14 @@ static ViewController *instance;
     CFReadStreamRef readS;
     CFWriteStreamRef writeS;
     CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef) CFBridgingRetain(hostName), [portNumber intValue], &readS, &writeS);
-    inputS = (__bridge NSInputStream *) readS;
-    outputS = (__bridge NSOutputStream *) writeS;
-    [inputS setDelegate:self];
-    [outputS setDelegate:self];
-    [inputS scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [outputS scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [inputS open];
-    [outputS open];
-}
-
-+ (ViewController*)getInstance{
-    instance = [[self alloc] init];
-    return instance;
+    appDelegate.inputStream = (__bridge NSInputStream *) readS;
+    appDelegate.outputStream = (__bridge NSOutputStream *) writeS;
+    [appDelegate.inputStream setDelegate:self];
+    [appDelegate.outputStream setDelegate:self];
+    [appDelegate.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [appDelegate.outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [appDelegate.inputStream open];
+    [appDelegate.outputStream open];
 }
 
 @end

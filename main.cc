@@ -21,7 +21,7 @@ int main(int argc,char ** argv){
 	//Setup Shared Vars
 	FrameQueue* fq = new FrameQueue();
 	CommandQueue* cq = new CommandQueue(); 
-
+	
 	//Create current algorithm
 	std::cout << "Creating Algorithm Context" << std::endl;
 	RemoteAlg alg(fq, cq);
@@ -42,6 +42,6 @@ int main(int argc,char ** argv){
 	algThread.join();
 	httpThread.join();
 	socThread.join();
-
+    
 	return 0;
 }

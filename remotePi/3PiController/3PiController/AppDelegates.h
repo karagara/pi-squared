@@ -8,15 +8,20 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import "ViewController.h"
+#import "MainConsoleController.h"
 
-@interface AppDelegates : NSObject <UIApplicationDelegate> {
+@interface AppDelegates : NSObject <NSStreamDelegate, UIApplicationDelegate> {
     UIWindow *window;
     UINavigationController *navigationController;
+    NSInputStream *inputStream;
+    NSOutputStream *outputStream;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) UINavigationController *navigationController;
-
+@property (nonatomic, retain) NSInputStream *inputStream;
+@property (nonatomic, retain) NSOutputStream *outputStream;
 
 @end
 
