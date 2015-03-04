@@ -1,0 +1,36 @@
+<html>
+<head>
+<script type = 'text/javascript'>
+        function getNewImg() {
+                document.getElementById('cam').src = '/api/stream?rand=' + Math.random();
+        }
+        function startTimer() {
+                setInterval(getNewImg, 100);
+        }
+        function sendCommand(com){
+                var xhr = new XMLHttpRequest();
+                xhr.open('get', '/api/placecom/' + com);
+                xhr.setRequestHeader('Content-Type','application/json');
+                var request = '{}';
+                xhr.send(request);
+        };
+</script>
+</head>
+<body onload='startTimer()'>
+<h1>Pi-Squared Stream</h1>
+<img id='cam' src='/api/stream'>
+<div>
+<h2>Controls</h2>
+<div>
+<button onclick='sendCommand("up")'>up</button>
+</div>
+<div>
+<button onclick='sendCommand("left")'>left</button>
+<button onclick='sendCommand("right")'>right</button>
+</div>
+<div>
+<button onclick='sendCommand("down")'>down</button>
+</div>
+</div>
+</body>
+</html>
