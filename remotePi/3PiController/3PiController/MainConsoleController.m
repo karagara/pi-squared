@@ -11,12 +11,16 @@
 
 
 @implementation MainConsoleController
-
+//http://www.joomlaworks.net/images/demos/galleries/abstract/6.jpg
 static AppDelegates *appDelegate;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
      appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
+        NSURL *url = [NSURL URLWithString:@"http://www.joomlaworks.net/images/demos/galleries/abstract/6.jpg"];
+        NSData *data = [[NSData alloc]initWithContentsOfURL:url ];
+        UIImage *img = [[UIImage alloc]initWithData:data ];
+        self.image.image=img;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,7 +33,6 @@ static AppDelegates *appDelegate;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-
 }
 
 
@@ -55,6 +58,7 @@ static AppDelegates *appDelegate;
 }
 
 -(IBAction)stop:(id)sender{
+    
     [self sendCommand:@"stop"];
 }
 

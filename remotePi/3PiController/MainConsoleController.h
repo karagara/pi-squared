@@ -12,6 +12,7 @@
 #import "AppDelegates.h"
 
 @interface MainConsoleController: UIViewController <NSStreamDelegate>{
+    UIImageView *image;
 }
 
 @property(nonatomic, strong) IBOutlet UIButton *doUp;
