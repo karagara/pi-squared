@@ -12,9 +12,11 @@
 @class ViewController;
 
 @implementation SettingViewController
+static AppDelegates *appDelegate;
 
 - (void) viewDidLoad{
     [super viewDidLoad];
+    appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"3pi.ipAddress"] != nil) {
         [self.ip setText:[[NSUserDefaults standardUserDefaults] objectForKey:@"3pi.ipAddress"]];
     }
@@ -39,6 +41,12 @@
 }
 
 -(IBAction)doSave:(id)sender {
+    //save speed the user set
+    NSString *s = self.speed.text;
+    NSString *speedSet = [NSString stringWithFormat:@"speed%@",s];
+    //if the receive side have the char starting at "s", so it will substring from the string and get the value of speed
+    //and assign the speed to the 3pi-Robot
+    [self sendCommand:speedSet];
     //save the user input host name and port number
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[self.ip text] forKey:@"3pi.ipAddress"];
@@ -47,13 +55,18 @@
 }
 
 -(IBAction)doClear:(id)sender {
-
-    //@Action todo
+    [self.ip setText:@" "];
+    [self.port setText:@" "];
 }
 
--(IBAction)doDefault:(id)sender{
+- (IBAction)changeSpeed:(UISlider *)sender{
+    int val = sender.value;
+    self.speed.text = [NSString stringWithFormat:@"%i",val];
+}
 
-    //@Action todo
+- (void) sendCommand: (NSString *) command{
+    NSData *data = [[NSData alloc] initWithData:[command dataUsingEncoding:NSASCIIStringEncoding]];
+    [appDelegate.outputStream write:[data bytes] maxLength:[data length]];
 }
 
 @end

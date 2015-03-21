@@ -64,6 +64,7 @@ static AppDelegates *appDelegate;
     NSString *response  = [NSString stringWithFormat:@"conndone"];
     NSData *data = [[NSData alloc] initWithData:[response dataUsingEncoding:NSASCIIStringEncoding]];
     [appDelegate.outputStream write:[data bytes] maxLength:[data length]];
+    NSLog(@"%@, %@", hostName, portNumber);
     
     while (([appDelegate.outputStream streamStatus] != NSStreamStatusOpen && [appDelegate.outputStream streamStatus] != NSStreamStatusError)) {
         [self.connStatus performSelectorOnMainThread:@selector(setText:) withObject:@"Connection in progress…" waitUntilDone:YES];
@@ -105,5 +106,7 @@ static AppDelegates *appDelegate;
     [appDelegate.inputStream open];
     [appDelegate.outputStream open];
 }
+
+
 
 @end

@@ -30,8 +30,8 @@
     self.window.rootViewController = navigationController;
     
     [window makeKeyAndVisible];
-
     AppDelegates *appDelegate = (AppDelegates *) [[UIApplication sharedApplication] delegate];
+
 
     return YES;
 }

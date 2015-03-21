@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainConsoleController">
             <connections>
-                <outlet property="image" destination="o8D-tZ-QP5" id="NfX-AK-Mfu"/>
+                <outlet property="imageView" destination="o8D-tZ-QP5" id="d8e-ED-DWh"/>
+                <outlet property="motionMode" destination="ndT-zP-2c3" id="A6w-oL-DPP"/>
                 <outlet property="view" destination="iN0-l3-epB" id="LIJ-Vh-bqp"/>
             </connections>
         </placeholder>
@@ -15,17 +16,6 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ZLK-wX-8Y9">
-                    <rect key="frame" x="132" y="380" width="55" height="33"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="Back">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="goDown:" destination="-1" eventType="touchDown" id="tpb-4v-hPX"/>
-                    </connections>
-                </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="k1n-fd-cyy">
                     <rect key="frame" x="64" y="335" width="30" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -34,7 +24,8 @@
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="goLeft:" destination="-1" eventType="touchDown" id="STH-64-JMR"/>
+                        <action selector="goLeft:" destination="-1" eventType="touchDown" id="lnV-lL-yRL"/>
+                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="ELo-g8-TuP"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HgT-Lt-609">
@@ -44,17 +35,18 @@
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="YwP-w8-p5B"/>
+                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="4YN-G7-xsf"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bA7-Q2-JHc">
-                    <rect key="frame" x="131" y="293" width="57" height="30"/>
+                    <rect key="frame" x="132" y="291" width="57" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <state key="normal" title="Forward">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="goUp:" destination="-1" eventType="touchDown" id="fLv-VE-0Zy"/>
+                        <action selector="goDown:" destination="-1" eventType="touchDown" id="3c1-VU-8mC"/>
+                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="1GK-mQ-lT5"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="92G-iI-7Rp">
@@ -65,16 +57,51 @@
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="goRight:" destination="-1" eventType="touchDown" id="YPW-UX-nft"/>
+                        <action selector="goRight:" destination="-1" eventType="touchDown" id="8xW-0U-TxJ"/>
+                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="npb-y5-ah8"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ZLK-wX-8Y9">
+                    <rect key="frame" x="132" y="380" width="55" height="33"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <state key="normal" title="Back">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="goUp:" destination="-1" eventType="touchDown" id="H6g-y3-j0l"/>
+                        <action selector="stop:" destination="-1" eventType="touchUpInside" id="GRT-vU-J6v"/>
                     </connections>
                 </button>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="o8D-tZ-QP5">
                     <rect key="frame" x="16" y="66" width="288" height="203"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Motion Contol" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kf7-bk-1su">
+                    <rect key="frame" x="22" y="458" width="177" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="highlightedColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="ndT-zP-2c3">
+                    <rect key="frame" x="55" y="487" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9Bw-ED-HoK">
+                    <rect key="frame" x="179" y="440" width="102" height="57"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                    <state key="normal" title="Capture">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="capture:" destination="-1" eventType="touchUpInside" id="leI-EW-rGI"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-            <point key="canvasLocation" x="552" y="372"/>
+            <point key="canvasLocation" x="424" y="379"/>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
